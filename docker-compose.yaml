@@ -1,0 +1,48 @@
+services:
+  express:
+    container_name: qc-express
+
+    image: qc-express:latest
+
+    build: 
+      context: ./express
+      dockerfile: Dockerfile.express
+
+    ports:
+      - "3000:3000"
+
+    volumes:
+      - ./express:/app
+      - qc_tools_express_node:/app/node_modules
+
+    networks:                          #ネットワークを追加
+      - default
+      # .sh
+
+  dev:
+    container_name: qc-dev
+
+    image: qc-dev:latest
+
+    build: 
+      context: .
+      dockerfile: Dockerfile
+
+    ports:
+      - "25001:25001"
+
+#bind mount の意味　名前つきvolume(データ保存先)
+    volumes:
+      - .:/app
+      - qc_tools_node_modules:/app/node_modules
+
+    depends_on:
+      - express
+
+    networks:                          #ネットワークを追加
+      - default
+
+# 名前つきvolume
+volumes:
+  qc_tools_node_modules:
+  qc_tools_express_node:
