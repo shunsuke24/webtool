@@ -1,8 +1,8 @@
 services:
   express:
-    container_name: qc-express
+    container_name: wb-express
 
-    image: qc-express:latest
+    image: wb-express:latest
 
     build: 
       context: ./express
@@ -13,16 +13,16 @@ services:
 
     volumes:
       - ./express:/app
-      - qc_tools_express_node:/app/node_modules
+      - webscraping_express_node:/app/node_modules
 
     networks:                          #ネットワークを追加
       - default
       # .sh
 
   dev:
-    container_name: qc-dev
+    container_name: wb-dev
 
-    image: qc-dev:latest
+    image: wb-dev:latest
 
     build: 
       context: .
@@ -34,7 +34,7 @@ services:
 #bind mount の意味　名前つきvolume(データ保存先)
     volumes:
       - .:/app
-      - qc_tools_node_modules:/app/node_modules
+      - webscraping_node_modules:/app/node_modules
 
     depends_on:
       - express
@@ -44,5 +44,5 @@ services:
 
 # 名前つきvolume
 volumes:
-  qc_tools_node_modules:
-  qc_tools_express_node:
+  webscraping_node_modules:
+  webscraping_express_node:
