@@ -177,11 +177,11 @@ const schemaBread = {
 };
 
 router.get('/', (req, res) => {
-  res.json({ message: 'Hello World! v2' });
+  res.json({ message: 'Hello World! ' });
 });
 
 router.get('/tdk', (req, res) => {
-  res.json({ message: 'Hello World! This is TDK v2' });
+  res.json({ message: 'Hello World! This is TDK ' });
 });
 
 router.use(
@@ -193,9 +193,8 @@ router.use(bodyParser.json());
 
 router.post('/tdk', async (req, res) => {
   requestedBody = Object.values(req.body)[0];
-  requestNumber = Object.values(req.body)[1];
 
-  crawl(requestedBody, requestNumber).then((value) => {
+  crawl(requestedBody).then((value) => {
     res.send(value);
   });
 });
@@ -346,23 +345,25 @@ const crawlJson = (url, requestNumber) => {
   return metaData;
 };
 
-
-
-
 const crawl = (url) => {
   const metaData = axios(url)
     .then((response) => {
       const htmlParser = response.data;
-
       const $ = cheerio.load(htmlParser);
+      let hs = []
+      $('h1, h2, h3, h4').each((i, e) => {
+        hs[i] = { text: $(e).text().trim().replace(/[\t|\n]/," "), name: $(e)[0].name }
+      })
+      
       const data = {
-        url: url,
+        url,
         title: $("title").text(),
         description: $('meta[name="description"]').attr("content"),
         keywords: $('meta[name="keywords"]').attr("content"),
+        hs,
         canonical: $('link[rel="canonical"]').attr("href"),
-        requestNumber: requestNumber
       };
+      // console.log(JSON.stringify(data))
       return JSON.stringify(data);
     })
     .catch((err) => {
@@ -377,7 +378,7 @@ const crawl = (url) => {
         title: "NOT FOUND",
         description: "NOT FOUND",
         keywords: "NOT FOUND",
-        canonical: "NOT FOUND",
+        hs: [],
         requestNumber: requestNumber
       };
 

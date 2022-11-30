@@ -19,6 +19,10 @@
 <script setup lang="ts">
 </script>
 <style scoped>
+
+body {
+  margin: 0;
+}
 .el-header {
   background-color: rgb(255, 255, 255);
   text-align: left;
@@ -32,9 +36,5 @@
   color: var(--el-text-color-primary);
 }
 
-/* * {
-margin: 0px;
-padding: 0px;
-} */
 
 </style>

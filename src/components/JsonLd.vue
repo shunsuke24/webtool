@@ -28,7 +28,6 @@
   <ul>
     <li>URL入力方法: 改行区切り</li>
     <li>JSON LD: <span color="#67c23a">緑:構造に問題無し</span>・<span color="#f56c6c">赤:構造に問題あり</span>・黒:適合スキーマなし</li>
-    <li>*JSON LDのコラムに構造化データのJSONLDタイプが黒文字で表示された場合ご連絡ください。</li>
   </ul>
   
   <el-alert v-show="doneAlert" title="完了しました" type="success" center show-icon />
@@ -140,4 +139,5 @@ ul li, ol li {
   padding: 0.5em 0;
   font-size: small;
 }
+
 </style>

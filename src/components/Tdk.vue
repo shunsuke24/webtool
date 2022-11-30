@@ -12,6 +12,7 @@
 
   <ul>
     <li>URL入力方法: 改行区切り</li>
+    <li>Hタグ: 赤:h1タグ・青:h2タグ・緑:h3タグ・オレンジ:h4タグ</li>
   </ul>
 
   <el-alert v-show="doneAlert" title="完了しました" type="success" center show-icon />
@@ -26,7 +27,7 @@ import UrlTable from './UrlTable.vue';
 import axios from 'axios';
 import queue from "queue";
 
-const urls = ref<String[]>([]);
+const urls = ref<string[]>([]);
 const datas = ref<any[]>([])
 const formSize = ref("default");
 const urlTextAreaRef = ref<FormInstance>()
@@ -50,22 +51,25 @@ const onClickSubmit = async (formEl: FormInstance | undefined) => {
   await formEl.validate((valid, _) => { isValid = valid })
 
   if (isValid) {
-    const arr = urlTextArea.url.split(/\s/)
+    const list = urlTextArea.url.split(/\s/)
     // URLの空白の削除.
-    var cleanArr = arr.filter(Boolean);
-    urls.value = cleanArr;
+    urls.value = list.filter(Boolean);
+    let urlIndex = urls.value.reduce((o: {[key: string]: number}, url: string, i) => {
+      return {...o, [url]:  i}
+    }, {})
 
     var q = queue({ results: [], concurrency: 4 });
-    urls.value.forEach((element, i) => {
+    let tmpRes = Array(urls.value.length)
+
+    urls.value.forEach(url => {
       const elementInQ = async () => {
         const response = await axios.post("http://localhost:3000/tdk", {
-          element: element,
-          number: i,
+          url,
         });
-        datas.value = [...datas.value, response.data];
-        datas.value.sort((a, b) => {
-          return a.requestNumber < b.requestNumber ? -1 : 1;
-        });
+
+        tmpRes[urlIndex[url]] = response.data 
+        datas.value = [...tmpRes].filter(Boolean)
+
         //　プログレスバ-の表示
         increaseProgressBar()
       };
@@ -74,6 +78,7 @@ const onClickSubmit = async (formEl: FormInstance | undefined) => {
 
     q.start(err => {
       if (err) throw err;
+      // datas.value = tmpRes.filter(Boolean)
       //　終了したことを画面上に表示.
       doneAlert.value = true
       isDone.value = true
@@ -133,4 +138,6 @@ ol li {
   padding: 0.5em 0;
   font-size: small;
 }
+
+
 </style>
